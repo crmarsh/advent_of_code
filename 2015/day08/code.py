@@ -1,8 +1,27 @@
+#!/usr/bin/env python3
 
+import os
+
+
+here = os.path.dirname(__file__)
+input_path = os.path.join(here, 'input.txt')
+
+
+def encode_line(original):
+    output = ['"']
+    for c in original:
+        if c == '"':
+            output.append('\\"')
+        elif c == '\\':
+            output.append('\\\\')
+        else:
+            output.append(c)
+    output.append('"')
+    return ''.join(output)
 
 
 def main():
-    with open('input.txt', 'r') as f:
+    with open(input_path, 'r') as f:
         total_code_code_size = 0
         total_code_size = 0
         total_data_size = 0
@@ -13,7 +32,7 @@ def main():
             code_size = len(line)
             conv_line = eval(line)
             # wrong? 1198 too low
-            repr_line = repr(line)
+            repr_line = encode_line(line)
             code_code_size = len(repr_line)
             data_size = len(conv_line)
             #print("code_size", code_size, "data_size", data_size)

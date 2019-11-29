@@ -72,6 +72,8 @@ def main():
 
     best = None
     best_dist = 2 * all_dist
+    worst = None
+    worst_dist = 0
     works = 0
     no_path = 0
     
@@ -84,7 +86,11 @@ def main():
         if dist < best_dist:
             best_dist = dist
             best = (dist, perm)
+        if dist > worst_dist:
+            worst_dist = dist
+            worst = (dist, perm)
     print(best)
+    print(worst)
 
 
 if __name__ == '__main__':

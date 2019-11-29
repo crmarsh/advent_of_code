@@ -5,12 +5,11 @@ import re
 import itertools
 
 here = os.path.dirname(__file__)
-
+input_path = os.path.join(here, 'input.txt')
 
 def load_input():
     line_re = re.compile(r'(\w+) to (\w+) = (\d+)')
-    path = os.path.join(here, 'input.txt')
-    with open(path, 'r') as f:
+    with open(input_path, 'r') as f:
         data = f.read()
     output = []
     lines = data.split('\n')

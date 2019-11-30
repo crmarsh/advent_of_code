@@ -17,11 +17,15 @@ def flatten_helper(data, result):
             result.extend(flatten(elem))
         return
     if type(data) == dict:
+        if 'red' in data:
+            return
+        if 'red' in data.values():
+            return
         for key in data:
             result.extend(flatten(key))
             result.extend(flatten(data[key]))
         return
-    print('!! need to handle', type(data))
+    raise Exception(type(data))
 
 
 def flatten(data):

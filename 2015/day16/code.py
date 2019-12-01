@@ -8,15 +8,21 @@ input_path = os.path.join(here, 'input.txt')
 
 match_to = {
     'children': 3,
-    'cats': 7,
     'samoyeds': 2,
-    'pomeranians': 3,
     'akitas': 0,
     'vizslas': 0,
-    'goldfish': 5,
-    'trees': 3,
     'cars': 2,
     'perfumes': 1,
+}
+
+match_gt = {
+    'cats': 7,
+    'trees': 3,
+}
+
+match_lt = {
+    'pomeranians': 3,
+    'goldfish': 5,
 }
 
 def load_input():
@@ -42,11 +48,16 @@ def main():
     for sue in sues:
         reject = False
         for key,value in sue[1].items():
-            m = match_to.get(key, None)
-            if m is not None and m != value:
+            if key in match_to and match_to[key] != value:
                 reject = True
-                #print('reject', sue)
                 break
+            if key in match_gt and match_gt[key] >= value:
+                reject = True
+                break
+            if key in match_lt and match_lt[key] <= value:
+                reject = True
+                break
+
         if not reject:
             print('accept', sue)
 

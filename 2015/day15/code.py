@@ -9,14 +9,8 @@ here = os.path.dirname(__file__)
 input_path = os.path.join(here, 'input.txt')
 
 total_teaspoons = 100
+calories_target = 500
 additive_properties = ['capacity', 'durability', 'flavor', 'texture']
-
-def score_ingredient(props):
-    capacity = props['capacity']
-    durability = props['durability']
-    flavor = props['flavor']
-    texture = props['texture']
-    return capacity, durability, flavor, texture
 
 
 def load_input():
@@ -37,7 +31,7 @@ def load_input():
     return ingredients
 
 
-def my_partition(n, d):
+def int_partition(n, d):
     for entry in itertools.combinations_with_replacement(range(d), n):
         res = [0] * d
         for item in entry:
@@ -50,12 +44,18 @@ def main():
     print(ingredients)
     n = len(ingredients)
     for name,props in ingredients:
-        print(name, score_ingredient(props))
+        print(name, props)
 
     best_score = 0
     best = None
     
-    for trial in my_partition(total_teaspoons, n):
+    for trial in int_partition(total_teaspoons, n):
+        calories = 0
+        for i,amount in enumerate(trial):
+            calories += amount * ingredients[i][1]['calories']
+        if calories != calories_target:
+            continue
+        
         prop_values = {prop_name: 0 for prop_name in additive_properties}
         for i,amount in enumerate(trial):
             for prop_name in additive_properties:
@@ -70,6 +70,7 @@ def main():
             best_score = score
             best = trial
             print(trial, score)
+    
     print(best_score, best)
 
 

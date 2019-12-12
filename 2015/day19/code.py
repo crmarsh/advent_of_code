@@ -5,7 +5,7 @@ import re
 
 
 here = os.path.dirname(__file__)
-input_path = os.path.join(here, 'input.txt')
+input_path = os.path.join(here, 'input0.txt')
 mapping_re = re.compile(r'(\w+) => (\w+)')
 
 
@@ -36,7 +36,7 @@ def part_one():
     print(len(xforms))
 
 
-def decompose_step(mappings, reachable):
+def all_mappings_step(mappings, reachable):
     next_reachable = set()
     for curr_str in reachable:
         for xform in mappings:
@@ -47,23 +47,35 @@ def decompose_step(mappings, reachable):
     return next_reachable
 
 
+def filter_old_steps(new_step, old_steps):
+    for step in old_steps:
+        new_step -= step
+
+
 def main():
     mappings, base_string = load_input()
-    reachable = set([base_string])
-    steps = [reachable]
-    unmappings = [(re.compile(post), pre) for (pre,post) in mappings]
-    while 'e' not in reachable:
-        print(len(steps), len(reachable))
-        next_reachable = decompose_step(unmappings, reachable)
-        # dump strings that were previously reachable
-        for step in steps:
-            next_reachable -= step
-        steps.append(next_reachable)
-        reachable = next_reachable
-        if len(steps) > 1000:
-            break
-    print(len(steps) - 1)
-    #print(steps)
+    forward_reachable = set(['e'])
+    backward_reachable = set([base_string])
+    forward_steps = [forward_reachable]
+    backward_steps = [backward_reachable]
+    forward_mappings = [(re.compile(pre), post) for (pre,post) in mappings]
+    backward_mappings = [(re.compile(post), pre) for (pre,post) in mappings]
+    while forward_reachable.isdisjoint(backward_reachable):
+        print('forward', len(forward_steps), len(forward_reachable), 'backward', len(backward_steps), len(backward_reachable))
+        if len(forward_reachable) < len(backward_reachable):
+            next_forward = all_mappings_step(forward_mappings, forward_reachable)
+            filter_old_steps(next_forward, forward_steps)
+            forward_steps.append(next_forward)
+            forward_reachable = next_forward
+        else:
+            next_backward = all_mappings_step(backward_mappings, backward_reachable)
+            filter_old_steps(next_backward, backward_steps)
+            backward_steps.append(next_backward)
+            backward_reachable = next_backward
+
+    print('forward', len(forward_steps), len(forward_reachable))
+    print('backward', len(backward_steps), len(backward_reachable))
+    print('total', len(forward_steps) + len(backward_steps) - 2)
 
 
 

@@ -5,7 +5,7 @@ import re
 
 
 here = os.path.dirname(__file__)
-input_path = os.path.join(here, 'input0.txt')
+input_path = os.path.join(here, 'input.txt')
 mapping_re = re.compile(r'(\w+) => (\w+)')
 
 
@@ -52,31 +52,35 @@ def filter_old_steps(new_step, old_steps):
         new_step -= step
 
 
+def sort_by_length(group):
+    return sorted(group, key=lambda x: len(x))
+
+
 def main():
     mappings, base_string = load_input()
     forward_reachable = set(['e'])
     backward_reachable = set([base_string])
-    forward_steps = [forward_reachable]
-    backward_steps = [backward_reachable]
+    forward_steps = 0
+    backward_steps = 0
     forward_mappings = [(re.compile(pre), post) for (pre,post) in mappings]
-    backward_mappings = [(re.compile(post), pre) for (pre,post) in mappings]
+    backward_mappings = [(re.compile(post), pre) for (pre,post) in mappings if pre != 'e']
     while forward_reachable.isdisjoint(backward_reachable):
-        print('forward', len(forward_steps), len(forward_reachable), 'backward', len(backward_steps), len(backward_reachable))
+        print('forward', (forward_steps), len(forward_reachable), 'backward', (backward_steps), len(backward_reachable))
         if len(forward_reachable) < len(backward_reachable):
             next_forward = all_mappings_step(forward_mappings, forward_reachable)
-            filter_old_steps(next_forward, forward_steps)
-            forward_steps.append(next_forward)
+            #filter_old_steps(next_forward, forward_steps)
+            forward_steps += 1 #.append(next_forward)
             forward_reachable = next_forward
         else:
             next_backward = all_mappings_step(backward_mappings, backward_reachable)
-            filter_old_steps(next_backward, backward_steps)
-            backward_steps.append(next_backward)
-            backward_reachable = next_backward
+            #filter_old_steps(next_backward, backward_steps)
+            backward_steps += 1 #.append(next_backward)
+            backward_reachable = set(sort_by_length(next_backward)[:100000])
 
-    print('forward', len(forward_steps), len(forward_reachable))
-    print('backward', len(backward_steps), len(backward_reachable))
-    print('total', len(forward_steps) + len(backward_steps) - 2)
-
+    print('forward', (forward_steps), len(forward_reachable))
+    print('backward', (backward_steps), len(backward_reachable))
+    #print('total', len(forward_steps) + len(backward_steps) - 2)
+    print('total', forward_steps + backward_steps)
 
 
 if __name__ == "__main__":

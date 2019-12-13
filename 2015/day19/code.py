@@ -75,7 +75,9 @@ def main():
             next_backward = all_mappings_step(backward_mappings, backward_reachable)
             #filter_old_steps(next_backward, backward_steps)
             backward_steps += 1 #.append(next_backward)
-            backward_reachable = set(sort_by_length(next_backward)[:100000])
+            backward_reachable = set(sort_by_length(next_backward)[:10])
+        if not forward_reachable or not backward_reachable:
+            raise Exception('fml')
 
     print('forward', (forward_steps), len(forward_reachable))
     print('backward', (backward_steps), len(backward_reachable))

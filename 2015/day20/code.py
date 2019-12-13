@@ -12,20 +12,40 @@ def factors(n):
 target_number = 29000000
 
 
-def presents_for(house_number):
+def presents_for_p1(house_number):
     f = factors(house_number)
     s = sum(f)
     return s * 10
 
 
-def find_house():
-    for house in itertools.count(500000):
-        p = presents_for(house)
+def find_house_p1():
+    for house in itertools.count(665280):
+        p = presents_for_p1(house)
         if p >= target_number:
             print('yay', house, p)
             return
-        print('boo', house, p / target_number)
+        if house % 10000 == 0:
+            print('boo', house, p / target_number)
+
+
+def presents_for_p2(house_number):
+    f = factors(house_number)
+    f = [x for x in f if 50 * x >= house_number]
+    s = sum(f)
+    return s * 11, f
+
+# 4324320 too high
+
+def find_house_p2():
+    for house in itertools.count(705600):
+        p, f = presents_for_p2(house)
+        if p >= target_number:
+            print('yay', house, p, sorted(f))
+            return
+        if house % 10000 == 0:
+            print('boo', house, p / target_number)
 
 
 if __name__ == '__main__':
-    find_house()
+    find_house_p1()
+    find_house_p2()

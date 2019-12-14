@@ -78,13 +78,21 @@ def do_combat(equipment):
 def main():
     min_cost = 99999999
     min_cost_equip = None
+    max_cost = 0
+    max_cost_equip = None
     for equipment in enumerate_equipment():
+        cost = sum([e.cost for e in equipment])
         if do_combat(equipment):
-            cost = sum([e.cost for e in equipment])
             if cost < min_cost:
                 min_cost = cost
                 min_cost_equip = equipment
+        else:
+            if cost > max_cost:
+                max_cost = cost
+                max_cost_equip = equipment
+
     print(min_cost, min_cost_equip)
+    print(max_cost, max_cost_equip)
 
 
 if __name__ == '__main__':

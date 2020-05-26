@@ -66,11 +66,11 @@ class World(object):
         self.mana_spent = 0
     
     def __str__(self):
-        state = []
-        state.append(str.format('-- {0} turn --', self.turn.title()))
-        state.append(str.format('- Player has {0} hit points, {1} armor, {2} mana',
-            self.player_state.hp, self.player_state.armor, self.player_state.mana))
-        state.append(str.format('- Boss has {0} hit points', self.boss_state.hp))
+        state = [
+            str.format('-- {0} turn --', self.turn.title()),
+            str.format('- Player has {0} hit points, {1} armor, {2} mana', self.player_state.hp, self.player_state.armor, self.player_state.mana),
+            str.format('- Boss has {0} hit points', self.boss_state.hp)
+        ]
         return '\n'.join(state)
     
     def apply_status_effects():

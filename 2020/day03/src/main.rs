@@ -1,19 +1,10 @@
-use std::fs::File;
-use std::io::{self, BufRead};
+use ::common::*;
 use std::path::Path;
 
 #[derive(Debug, PartialEq)]
 enum MapTile {
     Open,
     Tree,
-}
-
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
 }
 
 fn read_map_line(line: String) -> Vec<MapTile> {
@@ -35,7 +26,7 @@ where
 {
     let mut map_lines = Vec::new();
 
-    let lines = read_lines(filename).unwrap();
+    let lines = common::read_lines(filename).unwrap();
     for line_result in lines {
         if let Ok(line) = line_result {
             let ml = read_map_line(line);

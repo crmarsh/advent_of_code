@@ -27,6 +27,7 @@ fn main() {
     for i in 0..PREAMBLE {
         last_k.insert(numbers[i]);
     }
+    let mut sum_target = 0;
     for i in PREAMBLE..n {
         let checking = numbers[i];
         let mut found = false;
@@ -41,13 +42,35 @@ fn main() {
             }
         }
         if !found {
-            println!("{} not sum of {:?}", checking, last_k);
+            sum_target = checking;
             break;
         }
         // update last k
         last_k.remove(&numbers[i - PREAMBLE]);
         last_k.insert(numbers[i]);
     }
+    println!("Part 1: {} not sum of {:?}", sum_target, last_k);
+    // find subsequence that sums to target
+    let mut seq_sum = 0;
+    let mut seq_start = 0;
+    let mut seq_end = 0;
+    while seq_sum != sum_target {
+        if seq_sum < sum_target {
+            seq_sum += numbers[seq_end];
+            seq_end += 1;
+        } else {
+            seq_sum -= numbers[seq_start];
+            seq_start += 1;
+        }
+
+        assert!(seq_start <= seq_end);
+        assert!(seq_end <= n);
+    }
+    let seq = &numbers[seq_start..seq_end];
+    if let Some(a) = seq.iter().min() {
+    if let Some(b) = seq.iter().max() {
+    println!("Part 2: seq {:?}, {}, {} -> {}", seq, a, b, a + b);
+    }}
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>

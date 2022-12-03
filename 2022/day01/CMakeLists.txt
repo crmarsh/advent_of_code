@@ -1,6 +1,6 @@
 project(day01)
 
-add_executable(${PROJECT_NAME} main.c)
+add_executable(${PROJECT_NAME} main.cpp)
 
 configure_file(
     sample_input.txt

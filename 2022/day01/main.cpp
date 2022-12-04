@@ -1,54 +1,47 @@
+#include <string>
+#include <fstream>
+#include <filesystem>
+#include <iostream>
 #include <cstdlib>
-#include <cstdio>
-#include <cstring>
+
+using namespace std;
 
 // Find the size, allocate a buffer, read the file into it. Returns allocated buffer on success, else null.
-char *LoadFile(const char *fname)
+string LoadFile(const filesystem::path &p)
 {
-    FILE *fp = fopen(fname, "rb");
-    if (!fp)
+    if (!filesystem::exists(p))
     {
-        fprintf(stderr, "Error: file %s not found\n", fname);
-        return NULL;
+        return "";
     }
-    fseek(fp, 0, SEEK_END);
-    size_t n = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-    char *buffer = new char[n + 1];
-    if (!buffer)
-    {
-        fclose(fp);
-        fprintf(stderr, "Error: Could not allocate %zu bytes for file %s\n", n, fname);
-        return NULL;
-    }
-    size_t bytesRead = fread(buffer, 1, n, fp);
-    fclose(fp);
-    if (bytesRead != n)
-    {
-        fprintf(stderr, "Error: for file %s, should have %zu bytes but only read %zu\n", fname, n, bytesRead);
-        delete[] buffer;
-        return NULL;
-    }
-    buffer[n] = 0;
+    auto fileSize = filesystem::file_size(p);
+    string buffer(fileSize, 0);
+    ifstream inFile(p);
+    inFile.read(buffer.data(), fileSize);
     return buffer;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[], char *env[])
 {
+    /*
+    for (int i = 0; env[i]; ++i)
+    {
+        cout << "env " << env[i] << endl;
+    }
+    */
+
+    cout << "current dir: " << filesystem::current_path() << endl;
+
     const char *fname = "sample_input.txt";
     if (argc > 1)
     {
         fname = argv[1];
     }
 
-    char *buffer = LoadFile(fname);
-    if (!buffer)
-    {
-        return 1;
-    }
+    cout << "Loading input " << fname << endl;
 
-    printf("Hello, world %d", strlen(buffer));
+    auto buffer = LoadFile(fname);
 
-    delete[] buffer;
+    cout << "Hello, world " << buffer.size() << "\n";
+
     return 0;
 }

@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS 1
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -75,6 +74,7 @@ char *LoadFile(const char *fname)
     fclose(fp);
     if (bytesRead != n)
     {
+        free(buffer);
         fprintf(stderr, "Error: for file %s, should have %zu bytes but only read %zu\n", fname, n, bytesRead);
         return NULL;
     }

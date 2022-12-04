@@ -6,3 +6,7 @@ target/
 /build
 
 /.vscode
+
+__pycache__
+
+/bazel-*

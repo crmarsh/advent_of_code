@@ -5,7 +5,7 @@ import json
 import itertools
 
 here = os.path.dirname(__file__)
-input_path = os.path.join(here, 'input.json')
+input_path = os.path.join(here, "input.json")
 
 
 def flatten_helper(data, result):
@@ -17,9 +17,9 @@ def flatten_helper(data, result):
             result.extend(flatten(elem))
         return
     if type(data) == dict:
-        if 'red' in data:
+        if "red" in data:
             return
-        if 'red' in data.values():
+        if "red" in data.values():
             return
         for key in data:
             result.extend(flatten(key))
@@ -35,7 +35,7 @@ def flatten(data):
 
 
 def main():
-    with open(input_path, 'r') as f:
+    with open(input_path, "r") as f:
         data = json.load(f)
     flat = flatten(data)
     total = 0
@@ -45,5 +45,5 @@ def main():
     print(total)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

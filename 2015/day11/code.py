@@ -2,13 +2,13 @@
 import itertools
 
 
-puzzle_input = 'hepxcrrq'
-rule1_set = set([ord('i'), ord('o'), ord('l')])
+puzzle_input = "hepxcrrq"
+rule1_set = set([ord("i"), ord("o"), ord("l")])
 
 
 def inc_letter(letter):
-    if letter == ord('z'):
-        return True, ord('a')
+    if letter == ord("z"):
+        return True, ord("a")
     letter += 1
     if letter in rule1_set:
         letter += 1
@@ -74,11 +74,11 @@ def next_password(curr_password):
         if not check_rule2(coded):
             continue
         break
-    decoded = ''.join([chr(x) for x in coded])
-    print(curr_password, '=>', decoded)
+    decoded = "".join([chr(x) for x in coded])
+    print(curr_password, "=>", decoded)
     return decoded
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     password = next_password(puzzle_input)
     password = next_password(password)

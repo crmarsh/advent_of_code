@@ -5,18 +5,21 @@ import re
 import itertools
 
 here = os.path.dirname(__file__)
-input_path = os.path.join(here, 'input.txt')
+input_path = os.path.join(here, "input.txt")
+
 
 def load_input():
     # Alice would gain 2 happiness units by sitting next to Bob.
-    line_re = re.compile(r'(\w+) would (gain|lose) (\d+) happiness units by sitting next to (\w+).')
+    line_re = re.compile(
+        r"(\w+) would (gain|lose) (\d+) happiness units by sitting next to (\w+)."
+    )
     pair_points = {}
-    with open(input_path, 'r') as f:
+    with open(input_path, "r") as f:
         for line in f:
             m = line_re.match(line)
             if m:
                 name0, gainloss, points, name1 = m.groups()
-                if gainloss == 'lose':
+                if gainloss == "lose":
                     points = -int(points)
                 else:
                     points = int(points)
@@ -59,10 +62,10 @@ def main():
     people.sort()
     find_best(people, pair_points)
 
-    me = 'Me'
+    me = "Me"
     people.append(me)
     find_best(people, pair_points)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -4,12 +4,12 @@ import itertools
 import numpy as np
 
 here = os.path.dirname(__file__)
-input_path = os.path.join(here, 'input.txt')
+input_path = os.path.join(here, "input.txt")
 
 
 def load_input():
     data = []
-    with open(input_path, 'r') as f:
+    with open(input_path, "r") as f:
         for line in f:
             line = line.strip()
             if not line:
@@ -22,9 +22,9 @@ def load_board(board_strs):
     width = len(board_strs[0])
     height = len(board_strs)
     board = np.zeros((height, width), dtype=np.int8)
-    for row,row_str in enumerate(board_strs):
-        for col,str_value in enumerate(row_str):
-            if str_value == '#':
+    for row, row_str in enumerate(board_strs):
+        for col, str_value in enumerate(row_str):
+            if str_value == "#":
                 board[row, col] = 1
     return board
 
@@ -40,9 +40,9 @@ def iter_neighbors_indicies(board, row, col):
     end_col = min(col + 2, board.shape[1])
     for nr in range(start_row, end_row):
         for nc in range(start_col, end_col):
-            if (nr,nc) == (row,col):
+            if (nr, nc) == (row, col):
                 continue
-            yield nr,nc
+            yield nr, nc
 
 
 def count_neighbors(board, row, col):
@@ -66,7 +66,12 @@ def step_board(prev_board):
 
 def main():
     board = load_board(load_input())
-    corners = [(0,0), (0, board.shape[1] - 1), (board.shape[0] - 1, 0), (board.shape[0] - 1, board.shape[1] - 1)]
+    corners = [
+        (0, 0),
+        (0, board.shape[1] - 1),
+        (board.shape[0] - 1, 0),
+        (board.shape[0] - 1, board.shape[1] - 1),
+    ]
     for c in corners:
         board[c] = 1
     print(board)
@@ -74,8 +79,8 @@ def main():
         board = step_board(board)
         for c in corners:
             board[c] = 1
-        print('step', i)
-        #print(board)
+        print("step", i)
+        # print(board)
     print(board_sum(board))
 
 

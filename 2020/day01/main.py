@@ -1,14 +1,14 @@
 import sys
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     target_num = 2020
     adds_to = {}
     numbers = []
     try:
         fname = sys.argv[1]
     except:
-        fname = 'sample_input.txt'
-    with open(fname, 'r') as f:
+        fname = "sample_input.txt"
+    with open(fname, "r") as f:
         for line in f:
             try:
                 n = int(line)

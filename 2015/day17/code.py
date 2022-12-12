@@ -1,4 +1,3 @@
-
 import itertools
 from collections import Counter
 
@@ -40,7 +39,6 @@ def subset_sum_enumerate(target, so_far, arr_slice):
         not_taken = subset_sum_enumerate(target, so_far, rest)
         for result in itertools.chain(taken, not_taken):
             yield result
-    
 
 
 def main():

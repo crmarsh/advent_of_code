@@ -17,12 +17,12 @@ def count_lights():
 
 
 def parse_point(s):
-    res = [x for x in map(int, s.split(','))]
+    res = [x for x in map(int, s.split(","))]
     return res[0], res[1]
-    
+
 
 def parse_command(s):
-    a = s.split(' ')
+    a = s.split(" ")
     if len(a) < 4:
         return None, None, None
     if a[0] == "turn":
@@ -31,14 +31,14 @@ def parse_command(s):
         elif a[1] == "off":
             cmd = lambda x: max(0, x - 1)
         a = a[2:]
-    elif a[0] == 'toggle':
+    elif a[0] == "toggle":
         cmd = lambda x: x + 2
         a = a[1:]
     p0str, _, p1str = a
     p0 = parse_point(p0str)
     p1 = parse_point(p1str)
     return p0, p1, cmd
-    
+
 
 def enum_points(a, b):
     y_range = min(a[1], b[1]), max(a[1], b[1])
@@ -46,11 +46,11 @@ def enum_points(a, b):
     for y in range(y_range[0], y_range[1] + 1):
         for x in range(x_range[0], x_range[1] + 1):
             yield x, y
-    
+
 
 def main():
     global light_grid
-    with open("input.txt", 'r') as f:
+    with open("input.txt", "r") as f:
         for line in f:
             p0, p1, cmd = parse_command(line)
             if not cmd:
@@ -61,5 +61,5 @@ def main():
     print("lights on:", count_lights())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,4 +1,3 @@
-
 def paper_needed(l, w, h):
     s0 = l * w
     s1 = l * h
@@ -16,11 +15,11 @@ def ribbon_needed(l, w, h):
 
 
 def main():
-    with open('input.txt', 'r') as f:
+    with open("input.txt", "r") as f:
         total_paper = 0
         total_ribbon = 0
         for line in f:
-            dims = line.split('x')
+            dims = line.split("x")
             if len(dims) != 3:
                 continue
             dims = [a for a in map(int, dims)]
@@ -29,5 +28,6 @@ def main():
         print("total_paper:", total_paper)
         print("total_ribbon:", total_ribbon)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

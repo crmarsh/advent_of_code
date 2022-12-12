@@ -5,7 +5,7 @@ import re
 import itertools
 
 here = os.path.dirname(__file__)
-input_path = os.path.join(here, 'input.txt')
+input_path = os.path.join(here, "input.txt")
 
 
 class Deer(object):
@@ -21,12 +21,14 @@ class Deer(object):
         self.phase_time = 0
         self.phase = Deer.Flying
         self.score = 0
-    
+
     def __repr__(self):
-        return str.format("<{0}, {1} dist, {2}, score {3}>",
-         self.name, self.dist,
-         'flying' if self.phase == Deer.Flying else 'resting',
-         self.score
+        return str.format(
+            "<{0}, {1} dist, {2}, score {3}>",
+            self.name,
+            self.dist,
+            "flying" if self.phase == Deer.Flying else "resting",
+            self.score,
         )
 
     def __lt__(self, other):
@@ -48,9 +50,11 @@ class Deer(object):
 
 def load_input():
     # Vixen can fly 19 km/s for 7 seconds, but then must rest for 124 seconds.
-    line_re = re.compile(r'(\w+) can fly (\d+) km/s for (\d+) seconds, but then must rest for (\d+) seconds.')
+    line_re = re.compile(
+        r"(\w+) can fly (\d+) km/s for (\d+) seconds, but then must rest for (\d+) seconds."
+    )
     deer = set()
-    with open(input_path, 'r') as f:
+    with open(input_path, "r") as f:
         for line in f:
             m = line_re.match(line)
             if m:
@@ -75,8 +79,9 @@ def main():
         print(d)
     results = [(deer.score, deer.name, deer.dist) for deer in the_deer]
     results.sort()
-    for r in results: print(r)
+    for r in results:
+        print(r)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -3,59 +3,64 @@ import math
 
 
 class Equipment(object):
-    __slots__ = ['name', 'cost', 'damage', 'armor']
+    __slots__ = ["name", "cost", "damage", "armor"]
+
     def __init__(self, name, cost, damage, armor):
         self.name = name
         self.cost = cost
         self.damage = damage
         self.armor = armor
-    
+
     def __repr__(self):
-        return str.format('<{0}, {1}, {2}, {3}>', self.name, self.cost, self.damage, self.armor)
+        return str.format(
+            "<{0}, {1}, {2}, {3}>", self.name, self.cost, self.damage, self.armor
+        )
 
 
 class Character(object):
-    __slots__ = ['name', 'hp', 'damage', 'armor']
+    __slots__ = ["name", "hp", "damage", "armor"]
+
     def __init__(self, name, hp, damage, armor):
         self.name = name
         self.hp = hp
         self.damage = damage
         self.armor = armor
-    
+
     def __repr__(self):
-        return str.format('<{0}, {1}, {2}, {3}>', self.name, self.hp, self.damage, self.armor)
-    
+        return str.format(
+            "<{0}, {1}, {2}, {3}>", self.name, self.hp, self.damage, self.armor
+        )
 
 
-boss = Character('boss',  100, 8, 2)
-you =  Character('you',   100, 0, 0)
+boss = Character("boss", 100, 8, 2)
+you = Character("you", 100, 0, 0)
 
 weapons = [
-    Equipment('Dagger',        8,     4,      0),
-    Equipment('Shortsword',   10,     5,      0),
-    Equipment('Warhammer',    25,     6,      0),
-    Equipment('Longsword',    40,     7,      0),
-    Equipment('Greataxe',     74,     8,      0),
+    Equipment("Dagger", 8, 4, 0),
+    Equipment("Shortsword", 10, 5, 0),
+    Equipment("Warhammer", 25, 6, 0),
+    Equipment("Longsword", 40, 7, 0),
+    Equipment("Greataxe", 74, 8, 0),
 ]
 
 armors = [
-    Equipment('No Armor',      0,     0,      0),
-    Equipment('Leather',      13,     0,      1),
-    Equipment('Chainmail',    31,     0,      2),
-    Equipment('Splintmail',   53,     0,      3),
-    Equipment('Bandedmail',   75,     0,      4),
-    Equipment('Platemail',   102,     0,      5),
+    Equipment("No Armor", 0, 0, 0),
+    Equipment("Leather", 13, 0, 1),
+    Equipment("Chainmail", 31, 0, 2),
+    Equipment("Splintmail", 53, 0, 3),
+    Equipment("Bandedmail", 75, 0, 4),
+    Equipment("Platemail", 102, 0, 5),
 ]
 
 rings = [
-    Equipment('No Ring 1',     0,     0,      0),
-    Equipment('No Ring 2',     0,     0,      0),
-    Equipment('Damage +1',    25,     1,      0),
-    Equipment('Damage +2',    50,     2,      0),
-    Equipment('Damage +3',   100,     3,      0),
-    Equipment('Defense +1',   20,     0,      1),
-    Equipment('Defense +2',   40,     0,      2),
-    Equipment('Defense +3',   80,     0,      3),
+    Equipment("No Ring 1", 0, 0, 0),
+    Equipment("No Ring 2", 0, 0, 0),
+    Equipment("Damage +1", 25, 1, 0),
+    Equipment("Damage +2", 50, 2, 0),
+    Equipment("Damage +3", 100, 3, 0),
+    Equipment("Defense +1", 20, 0, 1),
+    Equipment("Defense +2", 40, 0, 2),
+    Equipment("Defense +3", 80, 0, 3),
 ]
 
 
@@ -95,5 +100,5 @@ def main():
     print(max_cost, max_cost_equip)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

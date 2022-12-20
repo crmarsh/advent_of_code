@@ -122,18 +122,36 @@ def load_input(fn="input.txt"):
                 print("hmm", line)
 
 
+def draw_graphviz(fn, valves):
+    lines = ['graph Valves {\n\tbgcolor="#bbbbbbbb"\n\tnode [shape=circle, style=filled, colorscheme=greens3]\n']
+    for v in valves:
+        if v.rate:
+            lines.append(f'\t{v.name} [label="{v.name} - {v.rate}", color=3];\n')
+        else:
+            lines.append(f'\t{v.name} [label="{v.name}", color=1];\n')
+    for v in valves:
+        for t in v.tunnels:
+            if t.name < v.name:
+                continue
+            lines.append(f'\t{v.name} -- {t.name};\n')
+    lines.append("}\n")
+    with open(fn, "w") as f:
+        f.writelines(lines)    
+
+
 def main():
     global best_path_calls, paths_considered
     examples = [
-        load_input("sample_input.txt"),
-        #load_input("input.txt"),
+        "sample_input.txt",
+        "input.txt",
     ]
 
-    for trial in examples:
+    for input_fn in examples:
         best_path_calls = 0
         paths_considered = 0
         network = {}
         openable = []
+        trial = load_input(input_fn)
         valves = [v for v in trial]
         for valve in valves:
             network[valve.name] = valve
@@ -141,15 +159,17 @@ def main():
                 openable.append(valve)
         for valve in valves:
             valve.resolve(network)
+        draw_graphviz(input_fn + ".dot", valves)
+
         openable.sort(reverse=True)
         print("openable valves", len(openable))
         
-        start_valve = network["AA"]
-        best = best_path(NetworkState(start_valve), 30)
-        for s in best:
-            print(s)
-        print('calls:', best_path_calls, 'considered:', paths_considered)
-        print('result:', best[-1].total_pressure)
+        # start_valve = network["AA"]
+        # best = best_path(NetworkState(start_valve), 30)
+        # for s in best:
+        #     print(s)
+        # print('calls:', best_path_calls, 'considered:', paths_considered)
+        # print('result:', best[-1].total_pressure)
 
 
 if __name__ == "__main__":

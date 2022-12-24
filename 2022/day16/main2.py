@@ -2,6 +2,7 @@
 
 import re
 from enum import Enum
+import itertools
 
 
 class Valve(object):
@@ -28,26 +29,32 @@ class Valve(object):
 
 
 class NetworkState(object):
-    def __init__(self, curr: Valve, other=None, action=None):
-        self.curr_valve = curr
+    def __init__(self, curr_you: Valve, curr_ele: Valve, other=None, action_you=None, action_ele=None):
+        self.curr_valve_you = curr_you
+        self.curr_valve_ele = curr_ele
+
         if other:
-            self.prev_valves = set(other.prev_valves)
+            self.prev_valves_you = set(other.prev_valves_you)
+            self.prev_valves_ele = set(other.prev_valves_ele)
             self.total_rate = other.total_rate
             self.total_pressure = other.total_pressure
             self.valves_open = set(other.valves_open)
         else:
-            self.prev_valves = set()
+            self.prev_valves_you = set()
+            self.prev_valves_ele = set()
             self.total_rate = 0
             self.total_pressure = 0
             self.valves_open = set()
-        self.action = action
+        self.action_you = action_you
+        self.action_ele = action_ele
 
     def __repr__(self):
-        if self.action:
-            action = f"({self.action[0].name}, {self.action[1].name})"
+        if self.action_you:
+            action = f"y:({self.action_you[0].name}, {self.action_you[1].name})"
+            action += f" e:({self.action_ele[0].name}, {self.action_ele[1].name})"
         else:
             action = "None"
-        return f"<state {self.curr_valve.name} {self.total_pressure} open:{[v.name for v in sorted(self.valves_open)]} -> {action}>"
+        return f"<state y:{self.curr_valve_you.name}, e:{self.curr_valve_ele.name} {self.total_pressure} open:{[v.name for v in sorted(self.valves_open)]} -> {action}>"
 
 
 class ActionType(Enum):
@@ -56,29 +63,52 @@ class ActionType(Enum):
     Move = 2
 
 
-def find_options(state: NetworkState):
+def find_options_you(state: NetworkState):
     options = []
-    if state.curr_valve.rate > 0 and state.curr_valve not in state.valves_open:
-        options = [(ActionType.Open, state.curr_valve)]
-    for adj in state.curr_valve.tunnels:
-        if adj in state.prev_valves:
+    if state.curr_valve_you.rate > 0 and state.curr_valve_you not in state.valves_open:
+        options = [(ActionType.Open, state.curr_valve_you)]
+    for adj in state.curr_valve_you.tunnels:
+        if adj in state.prev_valves_you:
             continue
         options.append((ActionType.Move, adj))
     if not options:
-        options = [(ActionType.Wait, state.curr_valve)]
+        options = [(ActionType.Wait, state.curr_valve_you)]
     return options
 
 
-def apply_option(curr_state, opt):
-    next_state = NetworkState(curr_state.curr_valve, curr_state, opt)
+def find_options_ele(state: NetworkState):
+    options = []
+    if state.curr_valve_ele.rate > 0 and state.curr_valve_ele not in state.valves_open:
+        options = [(ActionType.Open, state.curr_valve_ele)]
+    for adj in state.curr_valve_ele.tunnels:
+        if adj in state.prev_valves_ele:
+            continue
+        options.append((ActionType.Move, adj))
+    if not options:
+        options = [(ActionType.Wait, state.curr_valve_ele)]
+    return options
+
+
+def apply_option(curr_state, opt_you, opt_ele):
+    next_state = NetworkState(curr_state.curr_valve_you, curr_state.curr_valve_ele, curr_state, opt_you, opt_ele)
     next_state.total_pressure += next_state.total_rate
-    if opt[0] == ActionType.Open:
-        next_state.prev_valves = set()
-        next_state.valves_open.add(opt[1])
-        next_state.total_rate += opt[1].rate
-    elif opt[0] == ActionType.Move:
-        next_state.prev_valves.add(next_state.curr_valve)
-        next_state.curr_valve = opt[1]
+    
+    if opt_you[0] == ActionType.Open:
+        next_state.prev_valves_you = set()
+        next_state.valves_open.add(opt_you[1])
+        next_state.total_rate += opt_you[1].rate
+    elif opt_you[0] == ActionType.Move:
+        next_state.prev_valves_you.add(next_state.curr_valve_you)
+        next_state.curr_valve_you = opt_you[1]
+    
+    if opt_ele[0] == ActionType.Open:
+        next_state.prev_valves_ele = set()
+        next_state.valves_open.add(opt_ele[1])
+        next_state.total_rate += opt_ele[1].rate
+    elif opt_ele[0] == ActionType.Move:
+        next_state.prev_valves_ele.add(next_state.curr_valve_ele)
+        next_state.curr_valve_ele = opt_ele[1]
+
     return next_state
 
 
@@ -94,16 +124,20 @@ def best_path(curr_state, minutes_left):
     if minutes_left == 0:
         paths_considered += 1
         return [curr_state]
-    options = find_options(curr_state)
+    options_you = find_options_you(curr_state)
+    options_ele = find_options_ele(curr_state)
     high_score = 0
     best_option = []
-    for opt in options:
-        next_state = apply_option(curr_state, opt)
-        opt_path = best_path(next_state, minutes_left - 1)
-        opt_score = opt_path[-1].total_pressure
-        if high_score < opt_score:
-            high_score = opt_score
-            best_option = opt_path
+    for opt_you in options_you:
+        for opt_ele in options_ele:
+            if opt_you[0] == ActionType.Open and opt_ele[0] == ActionType.Open and opt_you[1] == opt_ele[1]:
+                continue
+            next_state = apply_option(curr_state, opt_you, opt_ele)
+            opt_path = best_path(next_state, minutes_left - 1)
+            opt_score = opt_path[-1].total_pressure
+            if high_score < opt_score:
+                high_score = opt_score
+                best_option = opt_path
     return [curr_state] + best_option
 
 
@@ -159,17 +193,16 @@ def main():
                 openable.append(valve)
         for valve in valves:
             valve.resolve(network)
-        draw_graphviz(input_fn + ".dot", valves)
 
         openable.sort(reverse=True)
         print("openable valves", len(openable))
         
-        # start_valve = network["AA"]
-        # best = best_path(NetworkState(start_valve), 30)
-        # for s in best:
-        #     print(s)
-        # print('calls:', best_path_calls, 'considered:', paths_considered)
-        # print('result:', best[-1].total_pressure)
+        start_valve = network["AA"]
+        best = best_path(NetworkState(start_valve, start_valve), 26)
+        for s in best:
+            print(s)
+        print('calls:', best_path_calls, 'considered:', paths_considered)
+        print('result:', best[-1].total_pressure)
 
 
 if __name__ == "__main__":

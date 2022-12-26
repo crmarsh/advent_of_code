@@ -10,16 +10,16 @@ class Valve(object):
         self.rate = int(rate)
         self.tunnel_names = tunnels.split(", ")
         self.tunnels = []
-    
+
     def __hash__(self):
         return hash(self.name)
 
     def __repr__(self):
         return f"<valve {self.name}, rate:{self.rate}, tunnels:{[t.name for t in self.tunnels]}>"
-    
+
     def __lt__(self, other):
         return self.rate < other.rate
-    
+
     def resolve(self, network):
         for tn in self.tunnel_names:
             t = network[tn]
@@ -85,11 +85,18 @@ def apply_option(curr_state, opt):
 best_path_calls = 0
 paths_considered = 0
 
+
 def best_path(curr_state, minutes_left):
     global best_path_calls, paths_considered
     best_path_calls += 1
     if (best_path_calls % 1000000) == 0:
-        print('best path calls', best_path_calls, "considered", paths_considered, flush=True)
+        print(
+            "best path calls",
+            best_path_calls,
+            "considered",
+            paths_considered,
+            flush=True,
+        )
 
     if minutes_left == 0:
         paths_considered += 1
@@ -126,7 +133,7 @@ def main():
     global best_path_calls, paths_considered
     examples = [
         load_input("sample_input.txt"),
-        #load_input("input.txt"),
+        # load_input("input.txt"),
     ]
 
     for trial in examples:
@@ -143,13 +150,13 @@ def main():
             valve.resolve(network)
         openable.sort(reverse=True)
         print("openable valves", len(openable))
-        
+
         start_valve = network["AA"]
         best = best_path(NetworkState(start_valve), 30)
         for s in best:
             print(s)
-        print('calls:', best_path_calls, 'considered:', paths_considered)
-        print('result:', best[-1].total_pressure)
+        print("calls:", best_path_calls, "considered:", paths_considered)
+        print("result:", best[-1].total_pressure)
 
 
 if __name__ == "__main__":
@@ -158,7 +165,7 @@ if __name__ == "__main__":
     os.chdir(os.path.dirname(__file__))
     main()
 
-#result:
+# result:
 # <state AA 0 open:[] -> None>
 # <state HK 0 open:[] -> (Move, HK)>
 # <state IF 0 open:[] -> (Move, IF)>

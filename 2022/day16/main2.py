@@ -11,16 +11,16 @@ class Valve(object):
         self.rate = int(rate)
         self.tunnel_names = tunnels.split(", ")
         self.tunnels = []
-    
+
     def __hash__(self):
         return hash(self.name)
 
     def __repr__(self):
         return f"<valve {self.name}, rate:{self.rate}, tunnels:{[t.name for t in self.tunnels]}>"
-    
+
     def __lt__(self, other):
         return self.rate < other.rate
-    
+
     def resolve(self, network):
         for tn in self.tunnel_names:
             t = network[tn]
@@ -29,7 +29,14 @@ class Valve(object):
 
 
 class NetworkState(object):
-    def __init__(self, curr_you: Valve, curr_ele: Valve, other=None, action_you=None, action_ele=None):
+    def __init__(
+        self,
+        curr_you: Valve,
+        curr_ele: Valve,
+        other=None,
+        action_you=None,
+        action_ele=None,
+    ):
         self.curr_valve_you = curr_you
         self.curr_valve_ele = curr_ele
 
@@ -90,9 +97,15 @@ def find_options_ele(state: NetworkState):
 
 
 def apply_option(curr_state, opt_you, opt_ele):
-    next_state = NetworkState(curr_state.curr_valve_you, curr_state.curr_valve_ele, curr_state, opt_you, opt_ele)
+    next_state = NetworkState(
+        curr_state.curr_valve_you,
+        curr_state.curr_valve_ele,
+        curr_state,
+        opt_you,
+        opt_ele,
+    )
     next_state.total_pressure += next_state.total_rate
-    
+
     if opt_you[0] == ActionType.Open:
         next_state.prev_valves_you = set()
         next_state.valves_open.add(opt_you[1])
@@ -100,7 +113,7 @@ def apply_option(curr_state, opt_you, opt_ele):
     elif opt_you[0] == ActionType.Move:
         next_state.prev_valves_you.add(next_state.curr_valve_you)
         next_state.curr_valve_you = opt_you[1]
-    
+
     if opt_ele[0] == ActionType.Open:
         next_state.prev_valves_ele = set()
         next_state.valves_open.add(opt_ele[1])
@@ -115,11 +128,18 @@ def apply_option(curr_state, opt_you, opt_ele):
 best_path_calls = 0
 paths_considered = 0
 
+
 def best_path(curr_state, minutes_left):
     global best_path_calls, paths_considered
     best_path_calls += 1
     if (best_path_calls % 1000000) == 0:
-        print('best path calls', best_path_calls, "considered", paths_considered, flush=True)
+        print(
+            "best path calls",
+            best_path_calls,
+            "considered",
+            paths_considered,
+            flush=True,
+        )
 
     if minutes_left == 0:
         paths_considered += 1
@@ -130,7 +150,11 @@ def best_path(curr_state, minutes_left):
     best_option = []
     for opt_you in options_you:
         for opt_ele in options_ele:
-            if opt_you[0] == ActionType.Open and opt_ele[0] == ActionType.Open and opt_you[1] == opt_ele[1]:
+            if (
+                opt_you[0] == ActionType.Open
+                and opt_ele[0] == ActionType.Open
+                and opt_you[1] == opt_ele[1]
+            ):
                 continue
             next_state = apply_option(curr_state, opt_you, opt_ele)
             opt_path = best_path(next_state, minutes_left - 1)
@@ -157,7 +181,9 @@ def load_input(fn="input.txt"):
 
 
 def draw_graphviz(fn, valves):
-    lines = ['graph Valves {\n\tbgcolor="#bbbbbbbb"\n\tnode [shape=circle, style=filled, colorscheme=greens3]\n']
+    lines = [
+        'graph Valves {\n\tbgcolor="#bbbbbbbb"\n\tnode [shape=circle, style=filled, colorscheme=greens3]\n'
+    ]
     for v in valves:
         if v.rate:
             lines.append(f'\t{v.name} [label="{v.name} - {v.rate}", color=3];\n')
@@ -167,10 +193,10 @@ def draw_graphviz(fn, valves):
         for t in v.tunnels:
             if t.name < v.name:
                 continue
-            lines.append(f'\t{v.name} -- {t.name};\n')
+            lines.append(f"\t{v.name} -- {t.name};\n")
     lines.append("}\n")
     with open(fn, "w") as f:
-        f.writelines(lines)    
+        f.writelines(lines)
 
 
 def main():
@@ -196,13 +222,13 @@ def main():
 
         openable.sort(reverse=True)
         print("openable valves", len(openable))
-        
+
         start_valve = network["AA"]
         best = best_path(NetworkState(start_valve, start_valve), 26)
         for s in best:
             print(s)
-        print('calls:', best_path_calls, 'considered:', paths_considered)
-        print('result:', best[-1].total_pressure)
+        print("calls:", best_path_calls, "considered:", paths_considered)
+        print("result:", best[-1].total_pressure)
 
 
 if __name__ == "__main__":
@@ -211,7 +237,7 @@ if __name__ == "__main__":
     os.chdir(os.path.dirname(__file__))
     main()
 
-#result:
+# result:
 # <state AA 0 open:[] -> None>
 # <state HK 0 open:[] -> (Move, HK)>
 # <state IF 0 open:[] -> (Move, IF)>

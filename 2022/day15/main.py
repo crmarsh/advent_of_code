@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import re
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class Point:
     x: int = 0
     y: int = 0
@@ -17,9 +17,6 @@ class Point:
 
     def manhattan_length(self):
         return abs(self.x) + abs(self.y)
-
-    def __hash__(self):
-        return (self.x, self.y).__hash__()
 
 
 @dataclass

@@ -1,70 +1,32 @@
 #!/usr/bin/env python3
 
-from dataclasses import dataclass
+import pathlib
+import sys
+import os
 
+here = pathlib.Path(os.path.dirname(__file__))
+utils = here.parent.parent / "python_common"
+sys.path.append(str(utils))
 
-@dataclass(eq=True, frozen=True, slots=True)
-class Point:
-    x: int = 0
-    y: int = 0
-    z: int = 0
-
-    def __add__(self, other):
-        return Point(self.x + other.x, self.y + other.y, self.z + other.z)
+from math_util import *
 
 
 directions = [
-    Point(1, 0, 0),
-    Point(-1, 0, 0),
-    Point(0, 1, 0),
-    Point(0, -1, 0),
-    Point(0, 0, 1),
-    Point(0, 0, -1),
+    Point3D(1, 0, 0),
+    Point3D(-1, 0, 0),
+    Point3D(0, 1, 0),
+    Point3D(0, -1, 0),
+    Point3D(0, 0, 1),
+    Point3D(0, 0, -1),
 ]
-
-
-@dataclass
-class Range:
-    low: int = 0
-    too_high: int = 0
-
-    def expand_to(self, val: int) -> None:
-        if self.low < self.too_high:
-            self.low = min(self.low, val)
-            self.too_high = max(self.too_high, val + 1)
-        else:
-            self.low = val
-            self.too_high = val + 1
-    
-    def __contains__(self, val: int):
-        return self.low <= val < self.too_high
-
-    def __iter__(self):
-        return range(self.low, self.too_high)
-
-
-@dataclass
-class BoundingBox:
-    x_axis: Range = Range()
-    y_axis: Range = Range()
-    z_axis: Range = Range()
-
-    def expand_to(self, p: Point) -> None:
-        self.x_axis.expand_to(p.x)
-        self.y_axis.expand_to(p.y)
-        self.z_axis.expand_to(p.z)
-    
-    def __contains__(self, p: Point):
-        return p.x in self.x_axis and p.y in self.y_axis and p.z in self.z_axis
-
 
 class Droplet(object):
     def __init__(self) -> None:
-        self.bounds = BoundingBox()
+        self.bounds = BoundingBox3D()
         self.cubes = set()
         self.outside = set()
 
-    def add(self, p: Point):
+    def add(self, p: Point3D):
         self.bounds.expand_to(p)
         self.cubes.add(p)
 
@@ -79,17 +41,17 @@ class Droplet(object):
         # add the entire outside of the bounds to "outside", start from there
         # and work inwards, adding things to the explicit self.outside set
         # note: this double adds the edges and triple adds the corners, but that is okay here
-        for x in range(x0, x1+1):
-            for y in range(y0, y1+1):
-                leading_edge.append(Point(x, y, z0))
-                leading_edge.append(Point(x, y, z1))
-            for z in range(z0, z1+1):
-                leading_edge.append(Point(x, y0, z))
-                leading_edge.append(Point(x, y1, z))
-        for y in range(y0, y1+1):
-            for z in range(z0, z1+1):
-                leading_edge.append(Point(x0, y, z))
-                leading_edge.append(Point(x1, y, z))
+        for x in range(x0, x1 + 1):
+            for y in range(y0, y1 + 1):
+                leading_edge.append(Point3D(x, y, z0))
+                leading_edge.append(Point3D(x, y, z1))
+            for z in range(z0, z1 + 1):
+                leading_edge.append(Point3D(x, y0, z))
+                leading_edge.append(Point3D(x, y1, z))
+        for y in range(y0, y1 + 1):
+            for z in range(z0, z1 + 1):
+                leading_edge.append(Point3D(x0, y, z))
+                leading_edge.append(Point3D(x1, y, z))
         self.outside.update(leading_edge)
         print(f"start with {len(self.outside)} outside")
         steps = 0
@@ -116,7 +78,7 @@ class Droplet(object):
                 if adjacent not in self.cubes:
                     area += 1
         return area
-    
+
     def outside_surface_area(self):
         area = 0
         for c in self.cubes:
@@ -126,7 +88,6 @@ class Droplet(object):
                     area += 1
         return area
 
-
     def __repr__(self):
         return f"b:{self.bounds}, c:{len(self.cubes)}, area:{self.surface_area()}"
 
@@ -135,12 +96,12 @@ def parse_point(line):
     num_strs = line.split(",")
     if len(num_strs) != 3:
         return None
-    return Point(*map(int, num_strs))
+    return Point3D(*map(int, num_strs))
 
 
 def load_input(fn="input.txt"):
     print("loading", fn)
-    with open(fn, "r") as f:
+    with open(here / fn, "r") as f:
         for line in f:
             p = parse_point(line.strip())
             if p is None:
@@ -164,7 +125,4 @@ def main():
 
 
 if __name__ == "__main__":
-    import os
-
-    os.chdir(os.path.dirname(__file__))
     main()

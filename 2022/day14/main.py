@@ -1,40 +1,20 @@
 #!/usr/bin/python3
 
-from dataclasses import dataclass
+import pathlib
+import sys
+import os
 
+here = pathlib.Path(os.path.dirname(__file__))
+utils = here.parent.parent / "python_common"
+sys.path.append(str(utils))
 
-@dataclass
-class Point:
-    x: int = 0
-    y: int = 0
-
-    def __add__(self, other):
-        return Point(self.x + other.x, self.y + other.y)
-
-    def __hash__(self):
-        return (self.x, self.y).__hash__()
-
-
-@dataclass
-class Range:
-    min_val: int = 0
-    max_val: int = 0
-
-    def __contains__(self, val):
-        return self.min_val <= val <= self.max_val
-
-    def __len__(self):
-        return 1 + (self.max_val - self.min_val)
-
-    def expand_to_fit(self, val):
-        self.min_val = min(self.min_val, val)
-        self.max_val = max(self.max_val, val)
+from math_util import *
 
 
 falls = [
-    Point(0, 1),
-    Point(-1, 1),
-    Point(1, 1),
+    Point2D(0, 1),
+    Point2D(-1, 1),
+    Point2D(1, 1),
 ]
 
 
@@ -44,22 +24,22 @@ def load_input(fn="input.txt"):
     with open(fn, "r") as f:
         for line in f:
             pairs = line.strip().split(" -> ")
-            yield [Point(int(x), int(y)) for x, y in [p.split(",") for p in pairs]]
+            yield [Point2D(int(x), int(y)) for x, y in [p.split(",") for p in pairs]]
 
 
 class CaveSlice(object):
     def __init__(self):
-        self.start = Point(500, 0)
-        self.x_range = Range(500, 500)
-        self.y_range = Range(0, 0)
+        self.start = Point2D(500, 0)
+        self.x_range = Range(500, 501)
+        self.y_range = Range(0, 1)
         self.blocks = {}
         self.sand_count = 0
 
     def add_segment(self, p0, p1):
-        self.x_range.expand_to_fit(p0.x)
-        self.x_range.expand_to_fit(p1.x)
-        self.y_range.expand_to_fit(p0.y)
-        self.y_range.expand_to_fit(p1.y)
+        self.x_range.expand_to(p0.x)
+        self.x_range.expand_to(p1.x)
+        self.y_range.expand_to(p0.y)
+        self.y_range.expand_to(p1.y)
         start_x = min(p0.x, p1.x)
         end_x = max(p0.x, p1.x)
         dx = 1 if end_x > start_x else 0
@@ -67,7 +47,7 @@ class CaveSlice(object):
         end_y = max(p0.y, p1.y)
         dy = 1 if end_y > start_y else 0
         while True:
-            p = Point(start_x, start_y)
+            p = Point2D(start_x, start_y)
             self.blocks[p] = "#"
             if start_x == end_x and start_y == end_y:
                 break
@@ -79,16 +59,16 @@ class CaveSlice(object):
             self.add_segment(path[i], path[i + 1])
 
     def add_floor(self):
-        height_from_floor = self.y_range.max_val + 2 - self.start.y
-        floor_y = self.y_range.max_val + 2
+        height_from_floor = self.y_range.too_high + 1 - self.start.y
+        floor_y = self.y_range.too_high + 1
         floor_min_x = self.start.x - (height_from_floor + 2)  # couple extra for buffer
         floor_max_x = self.start.x + (height_from_floor + 3)
         for x in range(floor_min_x, floor_max_x):
-            p = Point(x, floor_y)
+            p = Point2D(x, floor_y)
             self.blocks[p] = "="
-        self.x_range.expand_to_fit(floor_min_x)
-        self.x_range.expand_to_fit(floor_max_x)
-        self.y_range.max_val += 2
+        self.x_range.expand_to(floor_min_x)
+        self.x_range.expand_to(floor_max_x)
+        self.y_range.too_high += 2
 
     def add_sand(self):
         pos = self.start
@@ -112,13 +92,11 @@ class CaveSlice(object):
                 return True
 
     def render(self):
-        w = len(self.x_range) + 2
-        h = len(self.y_range) + 2
         rows = []
-        for y in range(self.y_range.min_val, self.y_range.max_val + 2):
+        for y in range(self.y_range.low, self.y_range.too_high + 1):
             row = []
-            for x in range(self.x_range.min_val - 1, self.x_range.max_val + 2):
-                p = Point(x, y)
+            for x in range(self.x_range.low - 1, self.x_range.too_high + 1):
+                p = Point2D(x, y)
                 if p == self.start:
                     c = "+"
                 else:

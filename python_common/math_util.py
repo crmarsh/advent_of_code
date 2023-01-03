@@ -11,7 +11,7 @@ class Point2D:
 
     def __sub__(self, other):
         return Point2D(self.x - other.x, self.y - other.y)
-    
+
     def manhattan_length(self):
         return abs(self.x) + abs(self.y)
 
@@ -68,7 +68,7 @@ class Range:
 
     def contains_value(self, val) -> bool:
         return self.low <= val < self.too_high
-    
+
     def contains_range(self, other):
         return self.low <= other.low < other.too_high <= self.too_high
 

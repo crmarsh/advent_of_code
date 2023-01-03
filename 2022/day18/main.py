@@ -20,6 +20,7 @@ directions = [
     Point3D(0, 0, -1),
 ]
 
+
 class Droplet(object):
     def __init__(self) -> None:
         self.bounds = BoundingBox3D()

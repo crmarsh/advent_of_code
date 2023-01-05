@@ -72,6 +72,12 @@ class Range:
     def contains_range(self, other):
         return self.low <= other.low < other.too_high <= self.too_high
 
+    def wrap(self, val):
+        if val in self:
+            return val
+        x = (val - self.low) % len(self)
+        return self.low + x
+
 
 @dataclass(slots=True)
 class BoundingBox3D:

@@ -51,6 +51,10 @@ class Range:
             self.low = val
             self.too_high = val + 1
 
+    def clear(self) -> None:
+        self.low = 0
+        self.too_high = 0
+
     def __len__(self) -> int:
         return self.too_high - self.low
 
@@ -64,7 +68,8 @@ class Range:
         return self.low < other.low
 
     def __iter__(self):
-        return range(self.low, self.too_high)
+        for x in range(self.low, self.too_high):
+            yield x
 
     def contains_value(self, val) -> bool:
         return self.low <= val < self.too_high

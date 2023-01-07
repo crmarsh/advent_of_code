@@ -37,10 +37,10 @@ class Point3D:
     z: int = 0
 
     @staticmethod
-    def from_p2(other: Point2D, z: int = 0):
+    def from_p2(other: Point2D, z: int = 0) -> "Point3D":
         return Point3D(other.x, other.y, z)
 
-    def as_p2(self):
+    def as_p2(self) -> Point2D:
         return Point2D(self.x, self.y)
 
     def __add__(self, other: "Point3D") -> "Point3D":

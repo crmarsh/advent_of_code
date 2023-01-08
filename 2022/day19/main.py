@@ -65,6 +65,7 @@ class Amounts:
             return self.obsidian_amt
         elif val == Resource.geode:
             return self.geode_amt
+        raise Exception(f"invalid value {val}")
 
     def __add__(self, other):
         return Amounts(
@@ -114,7 +115,7 @@ class State(object):
 
 
 num_paths = 0
-curr_blueprints: Blueprints = None
+curr_blueprints: Blueprints = Blueprints(-1, [])
 
 
 def load_input(fn="input.txt") -> list[Blueprints]:
@@ -162,7 +163,7 @@ def possible_builds(curr_state: State):
     geode_robot = curr_blueprints.robots[Resource.geode.value]
     if geode_robot.costs <= curr_state.resources:
         return [geode_robot]
-    possible = [None]
+    possible: list[None | Robot] = [None]
     if curr_state.robots.geode_amt > 0:
         return possible
 

@@ -2,6 +2,7 @@
 
 
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -92,7 +93,7 @@ class HillMap(object):
 
     def find_path(self, a: Point, b: Point):
         """find minimum path on hill from a to b"""
-        reached_from = {a: None}
+        reached_from: dict[Point, Optional[Point]] = {a: None}
         leading_edge = [a]
         while True:
             curr = leading_edge.pop(0)
@@ -105,17 +106,19 @@ class HillMap(object):
                 reached_from[neighbor] = curr
                 leading_edge.append(neighbor)
         path = []
+        assert curr
         while True:
             path.append(curr)
-            curr = reached_from[curr]
-            if curr is None:
+            temp = reached_from.get(curr)
+            if temp is None:
                 break
+            curr = temp
         path.reverse()
         return path
 
     def find_path_from_ground(self, b: Point):
         """find minimum path from any 0 height to b"""
-        reached_from = {b: None}
+        reached_from: dict[Point, Point | None] = {b: None}
         leading_edge = [b]
         while True:
             curr = leading_edge.pop(0)
@@ -128,9 +131,12 @@ class HillMap(object):
                 reached_from[neighbor] = curr
                 leading_edge.append(neighbor)
         path = []
-        while curr:
+        while curr is not None:
             path.append(curr)
-            curr = reached_from[curr]
+            temp = reached_from[curr]
+            if temp is None:
+                break
+            curr = temp
         return path
 
 

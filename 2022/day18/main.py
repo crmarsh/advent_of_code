@@ -24,8 +24,8 @@ directions = [
 class Droplet(object):
     def __init__(self) -> None:
         self.bounds = BoundingBox3D()
-        self.cubes = set()
-        self.outside = set()
+        self.cubes: set[Point3D] = set()
+        self.outside: set[Point3D] = set()
 
     def add(self, p: Point3D):
         self.bounds.expand_to(p)

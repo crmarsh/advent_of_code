@@ -3,6 +3,7 @@
 import os
 import pathlib
 import re
+from typing import Optional
 
 here = pathlib.Path(os.path.dirname(__file__))
 
@@ -21,14 +22,14 @@ ops = {
 class Monkey(object):
     def __init__(self, name: str) -> None:
         self.name = name
-        self.value = None
-        self.lhs = None
-        self.rhs = None
-        self.lhs_name = None
-        self.rhs_name = None
-        self.op_name = None
+        self.value: Optional[int] = None
+        self.lhs: Optional["Monkey"] = None
+        self.rhs: Optional["Monkey"] = None
+        self.lhs_name: Optional[str] = None
+        self.rhs_name: Optional[str] = None
+        self.op_name: Optional[str] = None
 
-    def print_value(self):
+    def print_value(self) -> str:
         if self.value is not None:
             return f"{self.value}"
         if self.lhs is not None and self.rhs is not None:
@@ -37,17 +38,17 @@ class Monkey(object):
             return f"({lhs} {self.op_name} {rhs})"
         return f"{self.name}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Monkey {self.name}: {self.print_value()} >"
 
 
 class MonkeyGroup(object):
     def __init__(self) -> None:
-        self.monkeys: map[str, Monkey] = {}
-        self.to_resolve_set = set()
+        self.monkeys: dict[str, Monkey] = {}
+        self.to_resolve_set: set[str] = set()
         self.resolve_queue: list[str] = []
 
-    def build_resolve_queue(self, start_node):
+    def build_resolve_queue(self, start_node: str) -> None:
         monkey: Monkey = self.monkeys[start_node]
         if monkey.value is not None:
             return
@@ -59,20 +60,26 @@ class MonkeyGroup(object):
             self.resolve_queue.append(start_node)
             self.to_resolve_set.add(start_node)
 
-    def resolve(self):
+    def resolve(self) -> None:
         for name in self.resolve_queue:
             m: Monkey = self.monkeys[name]
             if not m.lhs and m.lhs_name:
                 m.lhs = self.monkeys[m.lhs_name]
             if not m.rhs and m.rhs_name:
                 m.rhs = self.monkeys[m.rhs_name]
-            if m.lhs and m.lhs.value is not None and m.rhs and m.rhs.value is not None:
+            if (
+                m.lhs
+                and m.lhs.value is not None
+                and m.rhs
+                and m.rhs.value is not None
+                and m.op_name is not None
+            ):
                 m.value = ops[m.op_name](m.lhs.value, m.rhs.value)
         self.to_resolve_set = set()
         self.resolve_queue = []
 
 
-def load_input(fn: str) -> list[Monkey]:
+def load_input(fn: str) -> MonkeyGroup:
     monkeys = MonkeyGroup()
     with open(here / fn, "r") as f:
         for line in f:
@@ -82,7 +89,10 @@ def load_input(fn: str) -> list[Monkey]:
                 if digits_re.match(val):
                     m.value = int(val)
                 else:
-                    parts = operation_re.match(val).groups()
+                    match = operation_re.match(val)
+                    if not match:
+                        continue
+                    parts = match.groups()
                     m.lhs_name = parts[0]
                     m.rhs_name = parts[2]
                     m.op_name = parts[1]
@@ -92,11 +102,17 @@ def load_input(fn: str) -> list[Monkey]:
     return monkeys
 
 
-def simplify_node_right(node):
+def simplify_node_right(node: Monkey) -> bool:
+    assert node.lhs
+    assert node.rhs
+
     if not node.lhs.rhs:
         return False
 
     val = node.lhs.rhs.value
+
+    assert val is not None
+    assert node.rhs.value is not None
 
     if node.lhs.op_name == "+":
         node.rhs.value -= val
@@ -111,8 +127,14 @@ def simplify_node_right(node):
     return True
 
 
-def simplify_node_left(node):
+def simplify_node_left(node: Monkey) -> bool:
+    assert node.lhs
+    assert node.rhs
+    assert node.lhs.lhs
+
     val = node.lhs.lhs.value
+    assert val is not None
+    assert node.rhs.value is not None
 
     if node.lhs.op_name == "+":
         node.rhs.value -= val
@@ -127,7 +149,9 @@ def simplify_node_left(node):
     return True
 
 
-def simplify_node(node):
+def simplify_node(node: Monkey) -> bool:
+    assert node.rhs
+    assert node.lhs
     if node.rhs.value is None and node.lhs.value is None:
         print("you are screwed")
         return False
@@ -137,7 +161,7 @@ def simplify_node(node):
     return simplify_node_right(node)
 
 
-def part1(file_name):
+def part1(file_name) -> None:
     monkeys = load_input(file_name)
     monkeys.build_resolve_queue("root")
     monkeys.resolve()
@@ -145,7 +169,7 @@ def part1(file_name):
     print("part 1:", root.value)
 
 
-def part2(file_name):
+def part2(file_name) -> None:
     monkeys = load_input(file_name)
 
     root = monkeys.monkeys["root"]
@@ -165,7 +189,7 @@ def part2(file_name):
     print("part 2:", root)
 
 
-def main():
+def main() -> None:
     examples = [
         "sample_input.txt",
         "input.txt",

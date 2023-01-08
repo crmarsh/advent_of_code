@@ -3,7 +3,7 @@ import sys
 if __name__ == "__main__":
     target_num = 2020
     adds_to = {}
-    numbers = []
+    numbers: list[int] = []
     try:
         fname = sys.argv[1]
     except:

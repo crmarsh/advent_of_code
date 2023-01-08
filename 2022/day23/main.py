@@ -83,7 +83,7 @@ class Board:
     def step(self) -> int:
         # first propose moves
         proposals = {}
-        proposal_count = {}
+        proposal_count: dict[Point2D, int] = {}
         for elf in self.elves:
             # check all 8 directions around the elf
             openings = {}

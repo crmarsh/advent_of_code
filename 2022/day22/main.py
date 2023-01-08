@@ -101,8 +101,8 @@ class Path:
             else:
                 self.steps.append(curr)
                 curr = 0
-                x = Turn(c)
-                self.turns.append(x)
+                t = Turn(c)
+                self.turns.append(t)
         self.steps.append(curr)
 
 

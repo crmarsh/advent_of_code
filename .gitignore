@@ -10,3 +10,5 @@ target/
 __pycache__
 
 /bazel-*
+
+/node_modules

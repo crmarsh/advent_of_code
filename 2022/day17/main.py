@@ -2,6 +2,7 @@
 
 import time
 import itertools
+import tqdm
 
 
 def load_input(fn="input.txt"):
@@ -179,9 +180,12 @@ def main():
         start = time.perf_counter()
         rocks = itertools.cycle(rock_list)
         tower = Tower()
-        for _ in range(rocks_to_drop):
+        progress = tqdm.tqdm(range(rocks_to_drop))
+        for _ in progress:
             rock = next(rocks)
             tower.drop_rock(rock, winds)
+            h = tower.highest_rock + tower.floor_height
+            progress.set_description(f"height: {h}")
         stop = time.perf_counter()
         print(tower)
         print(f"ran in {stop - start} seconds")

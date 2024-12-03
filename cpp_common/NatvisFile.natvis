@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="Vec2D&lt;*&gt;">
+		<DisplayString>({x}, {y})</DisplayString>
+	</Type>
+	<Type Name="Range&lt;*&gt;">
+		<DisplayString>[{low}, {high}]</DisplayString>
+	</Type>
+	<Type Name="Span&lt;*&gt;">
+		<DisplayString>span {_start,[_end-_start]}</DisplayString>
+		<!-- <DisplayString>{{size = {_end-_start}}}</DisplayString> -->
+		<Expand>
+			<Item Name="[size]">(_end-_start)</Item>
+			<ArrayItems>
+				<Size>(_end-_start)</Size>
+				<ValuePointer>_start</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+	<Type Name="Buffer&lt;*&gt;">
+		<DisplayString>{{size = {_size}}}</DisplayString>
+		<Expand>
+			<Item Name="[size]">_size</Item>
+			<Item Name="[capacity]">_allocated</Item>
+			<ArrayItems>
+				<Size>_size</Size>
+				<ValuePointer>_buffer</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+</AutoVisualizer>

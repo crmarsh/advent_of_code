@@ -12,3 +12,8 @@ __pycache__
 /bazel-*
 
 /node_modules
+
+.vs/
+*.user
+
+*.exe

@@ -1,0 +1,14 @@
+[project]
+name = "chris-aoc-solutions-common"
+version = "0.0.1"
+dependencies = [
+    "tqdm"
+]
+requires-python = ">=3.13"
+authors = [
+  {name = "Chris Marsh", email = "c.marshian@gmail.com"}
+]
+maintainers = [
+  {name = "Chris Marsh", email = "c.marshian@gmail.com"}
+]
+description = "My collection of answers to Advent of Code problem common library"

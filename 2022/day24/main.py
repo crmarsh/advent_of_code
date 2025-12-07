@@ -4,12 +4,9 @@ from dataclasses import dataclass, field
 from enum import Enum
 import os
 import pathlib
-import sys
 
 
 here = pathlib.Path(os.path.dirname(__file__))
-utils = here.parent.parent / "python_common"
-sys.path.append(str(utils))
 
 from math_util import *
 

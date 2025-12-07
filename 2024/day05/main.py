@@ -2,13 +2,10 @@
 
 import pathlib
 import sys
+from math_util import *
 
 here = pathlib.Path(__file__).parent
 in_file = here / "input.txt"
-utils = here.parent.parent / "python_common"
-sys.path.append(str(utils))
-
-from math_util import *
 
 
 def load_input():

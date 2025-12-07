@@ -1,14 +1,10 @@
 #!/usr/bin/python3
 
 import pathlib
-import sys
 import os
+from math_util import *
 
 here = pathlib.Path(os.path.dirname(__file__))
-utils = here.parent.parent / "python_common"
-sys.path.append(str(utils))
-
-from math_util import *
 
 
 falls = [

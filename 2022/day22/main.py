@@ -4,15 +4,11 @@ from dataclasses import dataclass, field
 from enum import Enum, IntEnum
 import os
 import pathlib
-import sys
+from math_util import *
 from typing import Tuple
 
 
 here = pathlib.Path(os.path.dirname(__file__))
-utils = here.parent.parent / "python_common"
-sys.path.append(str(utils))
-
-from math_util import *
 
 
 class Tile(Enum):

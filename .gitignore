@@ -17,3 +17,9 @@ __pycache__
 *.user
 
 *.exe
+
+*.egg-info
+
+.mypy_cache/
+.ruff_cache/
+.venv/

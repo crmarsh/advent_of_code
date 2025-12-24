@@ -39,6 +39,45 @@ def is_invalid(n):
     return False
 
 
+def split_in_equal_parts(whole_string, num_parts):
+    n = len(whole_string)
+    part_size, left_over = divmod(n, num_parts)
+    if left_over != 0:
+        return None
+    parts = []
+    while whole_string:
+        part = whole_string[:part_size]
+        whole_string = whole_string[part_size:]
+        parts.append(part)
+    return parts
+
+
+def all_equal(iterable):
+    i = iter(iterable)
+    first = next(i, None)
+    if first is None:
+        return True
+    while True:
+        a = next(i, None)
+        if a is None:
+            return True
+        if a != first:
+            return False
+
+
+def is_invalid2(n):
+    s = str(n)
+    length = len(s)
+
+    for num_parts in range(2, length + 1):
+        parts = split_in_equal_parts(s, num_parts)
+        if not parts:
+            continue
+        if all_equal(parts):
+            return True
+    return False
+
+
 def main(pairs):
     invalid_sum = 0
     for begin, end in pairs:
@@ -48,6 +87,15 @@ def main(pairs):
     print("invalid_sum:", invalid_sum)
 
 
+def main2(pairs):
+    invalid_sum = 0
+    for begin, end in pairs:
+        for num in range(begin, end + 1):
+            if is_invalid2(num):
+                invalid_sum += num
+    print("invalid_sum:", invalid_sum)
+
+
 if __name__ == "__main__":
     pairs = load_input()
-    main(pairs)
+    main2(pairs)

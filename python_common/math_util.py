@@ -29,6 +29,16 @@ class Point2D:
     def dot(self, other: "Point2D") -> int:
         return self.x * other.x + self.y * other.y
 
+    def neighbors(self) -> Iterator["Point2D"]:
+        yield Point2D(self.x + 1, self.y + 0)
+        yield Point2D(self.x + 1, self.y + 1)
+        yield Point2D(self.x + 0, self.y + 1)
+        yield Point2D(self.x - 1, self.y + 1)
+        yield Point2D(self.x - 1, self.y + 0)
+        yield Point2D(self.x - 1, self.y - 1)
+        yield Point2D(self.x + 0, self.y - 1)
+        yield Point2D(self.x + 1, self.y - 1)
+
 
 @dataclass(frozen=True, slots=True)
 class Point3D:
